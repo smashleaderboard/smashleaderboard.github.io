@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scuttery World Cup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --muted:  rgba(255,255,255,.3);
+      --gold:   #ffd700;
+      --silver: #c0cfe0;
+      --bronze: #cd7f32;
+      --green:  #3fb950;
+      --yellow: #d29922;
+      --red:    #f85149;
+    }
+
+    html, body {
+      background: #04070f;
+      color: #e6edf3;
+      font-family: 'Rajdhani', sans-serif;
+      padding: 48px 20px 80px;
+    }
+
+    #bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+
+    /* ── Header ── */
+    header { text-align: center; margin-bottom: 48px; }
+    .trophy { font-size: 52px; margin-bottom: 8px; display: inline-block; animation: trophyPulse 3s ease-in-out infinite; }
+
+    @keyframes trophyPulse {
+      0%, 100% { transform: scale(1);    filter: drop-shadow(0 0 0px rgba(255,215,0,0)); }
+      50%       { transform: scale(1.12); filter: drop-shadow(0 0 14px rgba(255,215,0,.7)); }
+    }
+    header h1 {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(52px, 12vw, 96px);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    header h1 span {
+      background: linear-gradient(180deg, #ffd700 0%, #ff8c00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 24px rgba(255,165,0,.5)) drop-shadow(0 0 60px rgba(255,140,0,.2));
+    }
+    /* glowing underline */
+    header::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 3px;
+      margin: 16px auto 0;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* ── Podium ── */
+    .podium {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+      align-items: stretch;
+    }
+
+    .podium-card { order: 1; }
+    .podium-card.first  { order: 0; }
+    .podium-card.third  { order: 2; }
+
+    .podium-card {
+      border-radius: 16px;
+      padding: 28px 16px 22px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 1px solid;
+      position: relative;
+      overflow: hidden;
+      transition: transform .2s ease;
+    }
+    .podium-card:hover { transform: translateY(-4px); }
+
+    /* top-edge colour bar */
+    .podium-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .podium-card.first {
+      background: linear-gradient(160deg, rgba(255,215,0,.12) 0%, rgba(255,215,0,.03) 100%);
+      border-color: rgba(255,215,0,.35);
+      padding-top: 36px;
+    }
+    .podium-card.first::before  { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+
+    .podium-card.second {
+      background: linear-gradient(160deg, rgba(192,207,224,.08) 0%, rgba(192,207,224,.02) 100%);
+      border-color: rgba(192,207,224,.25);
+    }
+    .podium-card.second::before { background: linear-gradient(90deg, transparent, var(--silver), transparent); }
+
+    .podium-card.third {
+      background: linear-gradient(160deg, rgba(205,127,50,.1) 0%, rgba(205,127,50,.02) 100%);
+      border-color: rgba(205,127,50,.25);
+    }
+    .podium-card.third::before  { background: linear-gradient(90deg, transparent, var(--bronze), transparent); }
+
+    .medal { font-size: 36px; margin-bottom: 10px; }
+
+    .podium-name {
+      font-family: 'Anton', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .podium-pts {
+      font-family: 'Anton', sans-serif;
+      font-size: 52px;
+      line-height: 1;
+      margin-top: 6px;
+    }
+    .podium-card.first  .podium-pts { color: var(--gold);   text-shadow: 0 0 24px rgba(255,215,0,.4); }
+    .podium-card.second .podium-pts { color: var(--silver); text-shadow: 0 0 20px rgba(192,207,224,.3); }
+    .podium-card.third  .podium-pts { color: var(--bronze); text-shadow: 0 0 20px rgba(205,127,50,.3); }
+
+    .pts-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 3px;
+      margin-bottom: 18px;
+    }
+
+    /* ── Country pills ── */
+    .countries { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+    .podium-card .countries { margin: 14px 0 0; }
+
+    .country-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 7px;
+      padding: 7px 13px 7px 9px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,.09);
+      background: rgba(255,255,255,.05);
+      transition: border-color .15s, background .15s;
+    }
+    .country-pill:hover { background: rgba(255,255,255,.09); }
+    .country-pill .flag { font-size: 17px; }
+    .country-pill .cp-pts {
+      font-family: 'Anton', sans-serif;
+      font-size: 15px;
+      margin-left: 3px;
+      letter-spacing: 1px;
+    }
+
+    .country-pill.heat-high { background: rgba(63,185,80,.12); border-color: rgba(63,185,80,.35); }
+    .country-pill.heat-high .cp-pts { color: var(--green); }
+    .country-pill.heat-mid  { background: rgba(210,153,34,.12); border-color: rgba(210,153,34,.35); }
+    .country-pill.heat-mid  .cp-pts { color: var(--yellow); }
+    .country-pill.heat-low  { background: rgba(248,81,73,.1);  border-color: rgba(248,81,73,.3); }
+    .country-pill.heat-low  .cp-pts { color: var(--red); }
+    .country-pill.heat-zero .cp-pts { color: var(--muted); }
+    .country-pill.on-fire::after { content: '🔥'; font-size: 12px; margin-left: 3px; }
+
+    /* ── Table ── */
+    .table-section {
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,.015);
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead tr { border-bottom: 1px solid rgba(255,255,255,.07); }
+    thead th {
+      padding: 14px 20px;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+      white-space: nowrap;
+    }
+    thead th.right { text-align: right; }
+
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.04); }
+
+    td { padding: 16px 20px; vertical-align: top; }
+
+    .rank-num {
+      font-family: 'Anton', sans-serif;
+      font-size: 26px;
+      color: rgba(255,255,255,.15);
+      white-space: nowrap;
+      padding-top: 10px;
+      width: 48px;
+    }
+
+    .row-name {
+      font-family: 'Anton', sans-serif;
+      font-size: 22px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .row-pts {
+      font-family: 'Anton', sans-serif;
+      font-size: 30px;
+      color: var(--gold);
+      text-align: right;
+      white-space: nowrap;
+      padding-top: 8px;
+    }
+    .row-pts .pts-unit {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      margin-left: 2px;
+    }
+
+    .table-countries { justify-content: flex-start; }
+
+    /* ── Entrance animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .podium-card.first  { animation-delay: .1s; }
+    .podium-card.second { animation-delay: .2s; }
+    .podium-card.third  { animation-delay: .3s; }
+
+    tbody tr {
+      animation: fadeUp .3s ease both;
+    }
+    tbody tr:nth-child(1)  { animation-delay: .35s; }
+    tbody tr:nth-child(2)  { animation-delay: .40s; }
+    tbody tr:nth-child(3)  { animation-delay: .45s; }
+    tbody tr:nth-child(4)  { animation-delay: .50s; }
+    tbody tr:nth-child(5)  { animation-delay: .55s; }
+    tbody tr:nth-child(6)  { animation-delay: .60s; }
+    tbody tr:nth-child(7)  { animation-delay: .65s; }
+    tbody tr:nth-child(8)  { animation-delay: .70s; }
+    tbody tr:nth-child(9)  { animation-delay: .75s; }
+
+    @keyframes goldGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,.1);  border-color: rgba(255,215,0,.35); }
+      50%       { box-shadow: 0 0 28px rgba(255,215,0,.35); border-color: rgba(255,215,0,.7);  }
+    }
+    @keyframes silverGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(192,207,224,.08); border-color: rgba(192,207,224,.25); }
+      50%       { box-shadow: 0 0 22px rgba(192,207,224,.3); border-color: rgba(192,207,224,.55); }
+    }
+    @keyframes bronzeGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(205,127,50,.08); border-color: rgba(205,127,50,.25); }
+      50%       { box-shadow: 0 0 22px rgba(205,127,50,.3); border-color: rgba(205,127,50,.55); }
+    }
+    @keyframes flameBob {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50%       { transform: translateY(-4px) rotate(4deg); }
+    }
+
+    .podium-card.first  { animation: fadeUp .4s ease both, goldGlow   3s ease-in-out 1s infinite; }
+    .podium-card.second { animation: fadeUp .4s ease both, silverGlow 3.4s ease-in-out 1.2s infinite; }
+    .podium-card.third  { animation: fadeUp .4s ease both, bronzeGlow 3.8s ease-in-out 1.4s infinite; }
+
+    .country-pill.on-fire::after {
+      content: '🔥';
+      font-size: 14px;
+      margin-left: 3px;
+      display: inline-block;
+      animation: flameBob 1.2s ease-in-out infinite;
+    }
+
+    @media (max-width: 600px) {
+      .podium { grid-template-columns: 1fr; align-items: stretch; }
+      .podium-card.first { padding-top: 28px; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="wrapper">
+  <header>
+    <div class="trophy">🏆</div>
+    <h1><span>Leaderboard</span></h1>
+  </header>
+
+  <div class="podium" id="podium"></div>
+
+  <div class="table-section" id="table-section" style="display:none">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Participant &amp; Teams</th>
+          <th class="right">Points</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+<script>
+const PLAYERS = [
+  { name: "Brendy",  countries: [{ flag:"🇧🇦",name:"Bosnia & Herzegovina",pts:0},{flag:"🇵🇦",name:"Panama",pts:0},{flag:"🇨🇴",name:"Colombia",pts:0},{flag:"🇩🇪",name:"Germany",pts:0}] },
+  { name: "Camryn",   countries: [{ flag:"🇯🇴",name:"Jordan",pts:0},{flag:"🇩🇿",name:"Algeria",pts:0},{flag:"🇮🇷",name:"Iran",pts:0},{flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",name:"England",pts:0}] },
+  { name: "Lochlann", countries: [{ flag:"🇹🇳",name:"Tunisia",pts:0},{flag:"🇦🇺",name:"Australia",pts:0},{flag:"🇺🇾",name:"Uruguay",pts:0},{flag:"🇧🇷",name:"Brazil",pts:0}] },
+  { name: "Jack",     countries: [{ flag:"🇶🇦",name:"Qatar",pts:0},{flag:"🇵🇾",name:"Paraguay",pts:0},{flag:"🇯🇵",name:"Japan",pts:0},{flag:"🇫🇷",name:"France",pts:0}] },
+  { name: "Calla",    countries: [{ flag:"🇺🇿",name:"Uzbekistan",pts:0},{flag:"🇨🇦",name:"Canada",pts:0},{flag:"🇦🇹",name:"Austria",pts:0},{flag:"🇦🇷",name:"Argentina",pts:0}] },
+  { name: "Aodhan",   countries: [{ flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",name:"Scotland",pts:0},{flag:"🇪🇬",name:"Egypt",pts:0},{flag:"🇲🇽",name:"Mexico",pts:0},{flag:"🇳🇱",name:"Netherlands",pts:0}] },
+  { name: "Paul",     countries: [{ flag:"🇨🇻",name:"Cape Verde",pts:0},{flag:"🇸🇪",name:"Sweden",pts:0},{flag:"🇺🇸",name:"USA",pts:0},{flag:"🇪🇸",name:"Spain",pts:0}] },
+  { name: "Sean",     countries: [{ flag:"🇨🇩",name:"DR Congo",pts:0},{flag:"🇨🇮",name:"Ivory Coast",pts:0},{flag:"🇪🇨",name:"Ecuador",pts:0},{flag:"🇲🇦",name:"Morocco",pts:0}] },
+  { name: "Alex",     countries: [{ flag:"🇸🇦",name:"Saudi Arabia",pts:0},{flag:"🇰🇷",name:"South Korea",pts:0},{flag:"🇸🇳",name:"Senegal",pts:0},{flag:"🇭🇷",name:"Croatia",pts:0}] },
+  { name: "Oisin",    countries: [{ flag:"🇮🇶",name:"Iraq",pts:0},{flag:"🇨🇿",name:"Czechia",pts:0},{flag:"🇨🇭",name:"Switzerland",pts:0},{flag:"🇵🇹",name:"Portugal",pts:0}] },
+  { name: "Conor",    countries: [{ flag:"🇿🇦",name:"South Africa",pts:0},{flag:"🇳🇴",name:"Norway",pts:0},{flag:"🇹🇷",name:"Turkey",pts:0},{flag:"🇧🇪",name:"Belgium",pts:0}] },
+  { name: "Dek",    countries: [{ flag:"🇬🇭",name:"Ghana",pts:0},{flag:"🇭🇹",name:"Haiti",pts:0},{flag:"🇨🇼",name:"Curaçao",pts:0},{flag:"🇳🇿",name:"New Zealand",pts:0}] },
+];
+
+function totalPts(p) { return p.countries.reduce((s, c) => s + c.pts, 0); }
+
+const globalMaxPts = Math.max(...PLAYERS.flatMap(p => p.countries.map(c => c.pts)));
+
+function pillsHTML(countries) {
+  countries = [...countries].sort((a, b) => b.pts - a.pts);
+  const localMax = Math.max(...countries.map(c => c.pts));
+  return countries.map(c => {
+    let heat;
+    if (c.pts === 0 || localMax === 0) {
+      heat = 'heat-zero';
+    } else {
+      const r = c.pts / localMax;
+      heat = r >= 0.66 ? 'heat-high' : r >= 0.33 ? 'heat-mid' : 'heat-low';
+    }
+    const fire = (globalMaxPts > 0 && c.pts === globalMaxPts) ? 'on-fire' : '';
+    return `<div class="country-pill ${heat} ${fire}"><span class="flag">${c.flag}</span>${c.name}<span class="cp-pts">+${c.pts}</span></div>`;
+  }).join('');
+}
+
+const sorted  = [...PLAYERS].sort((a, b) => totalPts(b) - totalPts(a));
+const podium  = document.getElementById('podium');
+
+sorted.slice(0, 3).forEach((p, i) => {
+  const t = totalPts(p);
+  podium.innerHTML += `
+    <div class="podium-card ${['first','second','third'][i]}">
+      <div class="medal">${['🥇','🥈','🥉'][i]}</div>
+      <div class="podium-name">${p.name}</div>
+      <div class="podium-pts">${t}</div>
+      <div class="pts-label">points</div>
+      <div class="countries">${pillsHTML(p.countries)}</div>
+    </div>`;
+});
+
+const tbody = document.getElementById('tbody');
+const rest  = sorted.slice(3);
+
+if (rest.length) {
+  document.getElementById('table-section').style.display = '';
+  rest.forEach((p, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td class="rank-num">${i + 4}</td>
+        <td>
+          <div class="row-name">${p.name}</div>
+          <div class="countries table-countries">${pillsHTML(p.countries)}</div>
+        </td>
+        <td class="row-pts">${totalPts(p)}<span class="pts-unit"> pts</span></td>
+      </tr>`;
+  });
+}
+</script>
+<script>
+(function () {
+  const canvas = document.getElementById('bg');
+  const ctx    = canvas.getContext('2d');
+  const COUNT  = 80;
+  let W, H, dots;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function makeDot() {
+    return {
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      r:     Math.random() * 1.2 + 0.4,
+      vx:    (Math.random() - 0.5) * 0.25,
+      vy:    (Math.random() - 0.5) * 0.25,
+      alpha: Math.random() * 0.35 + 0.05,
+      da:    (Math.random() - 0.5) * 0.004,
+    };
+  }
+
+  function init() {
+    resize();
+    dots = Array.from({ length: COUNT }, makeDot);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const d of dots) {
+      d.x += d.vx;
+      d.y += d.vy;
+      d.alpha += d.da;
+      if (d.alpha > 0.4 || d.alpha < 0.05) d.da *= -1;
+      if (d.x < 0) d.x = W;
+      if (d.x > W) d.x = 0;
+      if (d.y < 0) d.y = H;
+      if (d.y > H) d.y = 0;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${d.alpha.toFixed(3)})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  init();
+  draw();
+})();
+</script>
+</body>
+</html>
