@@ -66,6 +66,43 @@
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
 
+    /* ── Analysis button ── */
+    .analysis-btn-wrap {
+      text-align: center;
+      margin: -24px 0 36px;
+    }
+    .analysis-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.75);
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.04);
+      padding: 10px 22px;
+      border-radius: 8px;
+      transition: color .2s, border-color .2s, background .2s, box-shadow .2s;
+    }
+    .analysis-btn:hover {
+      color: var(--gold);
+      border-color: rgba(255,215,0,.5);
+      background: rgba(255,215,0,.06);
+      box-shadow: 0 0 18px rgba(255,215,0,.12);
+    }
+    .analysis-btn svg {
+      opacity: .6;
+      transition: opacity .2s, transform .2s;
+    }
+    .analysis-btn:hover svg {
+      opacity: 1;
+      transform: translateX(3px);
+    }
+
     /* ── Podium ── */
     .podium {
       display: grid;
@@ -313,6 +350,20 @@
     <h1><span>Leaderboard</span></h1>
   </header>
 
+  <div class="analysis-btn-wrap">
+    <a href="/analysis" class="analysis-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="8" width="3" height="5" rx="1" fill="currentColor"/>
+        <rect x="5.5" y="5" width="3" height="8" rx="1" fill="currentColor"/>
+        <rect x="10" y="2" width="3" height="11" rx="1" fill="currentColor"/>
+      </svg>
+      Pre-tournament predictions
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
   <div class="podium" id="podium"></div>
 
   <div class="table-section" id="table-section" style="display:none">
@@ -336,7 +387,7 @@ const PLAYERS = [
   { name: "Jack",     countries: [{ flag:"🇶🇦",name:"Qatar",pts:0},{flag:"🇵🇾",name:"Paraguay",pts:0},{flag:"🇯🇵",name:"Japan",pts:0},{flag:"🇫🇷",name:"France",pts:0}] },
   { name: "Calla",    countries: [{ flag:"🇺🇿",name:"Uzbekistan",pts:0},{flag:"🇨🇦",name:"Canada",pts:0},{flag:"🇦🇹",name:"Austria",pts:0},{flag:"🇦🇷",name:"Argentina",pts:0}] },
   { name: "Aodhan",   countries: [{ flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",name:"Scotland",pts:0},{flag:"🇪🇬",name:"Egypt",pts:0},{flag:"🇲🇽",name:"Mexico",pts:0},{flag:"🇳🇱",name:"Netherlands",pts:0}] },
-  { name: "Paul 🐐",     countries: [{ flag:"🇨🇻",name:"Cape Verde",pts:0},{flag:"🇸🇪",name:"Sweden",pts:0},{flag:"🇺🇸",name:"USA",pts:0},{flag:"🇪🇸",name:"Spain",pts:0}] },
+  { name: "Paul 🐐",  countries: [{ flag:"🇨🇻",name:"Cape Verde",pts:0},{flag:"🇸🇪",name:"Sweden",pts:0},{flag:"🇺🇸",name:"USA",pts:0},{flag:"🇪🇸",name:"Spain",pts:0}] },
   { name: "Seán",     countries: [{ flag:"🇨🇩",name:"DR Congo",pts:0},{flag:"🇨🇮",name:"Ivory Coast",pts:0},{flag:"🇪🇨",name:"Ecuador",pts:0},{flag:"🇲🇦",name:"Morocco",pts:0}] },
   { name: "Alex",     countries: [{ flag:"🇸🇦",name:"Saudi Arabia",pts:0},{flag:"🇰🇷",name:"South Korea",pts:0},{flag:"🇸🇳",name:"Senegal",pts:0},{flag:"🇭🇷",name:"Croatia",pts:0}] },
   { name: "Oisin",    countries: [{ flag:"🇮🇶",name:"Iraq",pts:0},{flag:"🇨🇿",name:"Czechia",pts:0},{flag:"🇨🇭",name:"Switzerland",pts:0},{flag:"🇵🇹",name:"Portugal",pts:0}] },
