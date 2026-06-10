@@ -380,26 +380,11 @@
   </div>
 </div>
 <script>
-const PLAYERS = [
-  { name: "Brendan",  countries: [{ flag:"🇧🇦",name:"Bosnia & Herzegovina",pts:0},{flag:"🇵🇦",name:"Panama",pts:0},{flag:"🇨🇴",name:"Colombia",pts:0},{flag:"🇩🇪",name:"Germany",pts:0}] },
-  { name: "Camryn",   countries: [{ flag:"🇯🇴",name:"Jordan",pts:0},{flag:"🇩🇿",name:"Algeria",pts:0},{flag:"🇮🇷",name:"Iran",pts:0},{flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",name:"England",pts:0}] },
-  { name: "Lochlann", countries: [{ flag:"🇹🇳",name:"Tunisia",pts:0},{flag:"🇦🇺",name:"Australia",pts:0},{flag:"🇺🇾",name:"Uruguay",pts:0},{flag:"🇧🇷",name:"Brazil",pts:0}] },
-  { name: "Jack",     countries: [{ flag:"🇶🇦",name:"Qatar",pts:0},{flag:"🇵🇾",name:"Paraguay",pts:0},{flag:"🇯🇵",name:"Japan",pts:0},{flag:"🇫🇷",name:"France",pts:0}] },
-  { name: "Calla",    countries: [{ flag:"🇺🇿",name:"Uzbekistan",pts:0},{flag:"🇨🇦",name:"Canada",pts:0},{flag:"🇦🇹",name:"Austria",pts:0},{flag:"🇦🇷",name:"Argentina",pts:0}] },
-  { name: "Aodhan",   countries: [{ flag:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",name:"Scotland",pts:0},{flag:"🇪🇬",name:"Egypt",pts:0},{flag:"🇲🇽",name:"Mexico",pts:0},{flag:"🇳🇱",name:"Netherlands",pts:0}] },
-  { name: "Paul 🐐",  countries: [{ flag:"🇨🇻",name:"Cape Verde",pts:0},{flag:"🇸🇪",name:"Sweden",pts:0},{flag:"🇺🇸",name:"USA",pts:0},{flag:"🇪🇸",name:"Spain",pts:0}] },
-  { name: "Seán",     countries: [{ flag:"🇨🇩",name:"DR Congo",pts:0},{flag:"🇨🇮",name:"Ivory Coast",pts:0},{flag:"🇪🇨",name:"Ecuador",pts:0},{flag:"🇲🇦",name:"Morocco",pts:0}] },
-  { name: "Alex",     countries: [{ flag:"🇸🇦",name:"Saudi Arabia",pts:0},{flag:"🇰🇷",name:"South Korea",pts:0},{flag:"🇸🇳",name:"Senegal",pts:0},{flag:"🇭🇷",name:"Croatia",pts:0}] },
-  { name: "Oisin",    countries: [{ flag:"🇮🇶",name:"Iraq",pts:0},{flag:"🇨🇿",name:"Czechia",pts:0},{flag:"🇨🇭",name:"Switzerland",pts:0},{flag:"🇵🇹",name:"Portugal",pts:0}] },
-  { name: "Conor",    countries: [{ flag:"🇿🇦",name:"South Africa",pts:0},{flag:"🇳🇴",name:"Norway",pts:0},{flag:"🇹🇷",name:"Turkey",pts:0},{flag:"🇧🇪",name:"Belgium",pts:0}] },
-  { name: "Derek",    countries: [{ flag:"🇬🇭",name:"Ghana",pts:0},{flag:"🇭🇹",name:"Haiti",pts:0},{flag:"🇨🇼",name:"Curaçao",pts:0},{flag:"🇳🇿",name:"New Zealand",pts:0}] },
-];
+const API_URL = "https://smashscuttery.pythonanywhere.com/";
 
 function totalPts(p) { return p.countries.reduce((s, c) => s + c.pts, 0); }
 
-const globalMaxPts = Math.max(...PLAYERS.flatMap(p => p.countries.map(c => c.pts)));
-
-function pillsHTML(countries) {
+function pillsHTML(countries, globalMaxPts) {
   countries = [...countries].sort((a, b) => b.pts - a.pts);
   const localMax = Math.max(...countries.map(c => c.pts));
   return countries.map(c => {
@@ -415,38 +400,60 @@ function pillsHTML(countries) {
   }).join('');
 }
 
-const sorted  = [...PLAYERS].sort((a, b) => totalPts(b) - totalPts(a));
-const podium  = document.getElementById('podium');
+function render(PLAYERS) {
+  const globalMaxPts = Math.max(...PLAYERS.flatMap(p => p.countries.map(c => c.pts)));
 
-sorted.slice(0, 3).forEach((p, i) => {
-  const t = totalPts(p);
-  podium.innerHTML += `
-    <div class="podium-card ${['first','second','third'][i]}">
-      <div class="medal">${['🥇','🥈','🥉'][i]}</div>
-      <div class="podium-name">${p.name}</div>
-      <div class="podium-pts">${t}</div>
-      <div class="pts-label">points</div>
-      <div class="countries">${pillsHTML(p.countries)}</div>
-    </div>`;
-});
+  const sorted = [...PLAYERS].sort((a, b) => totalPts(b) - totalPts(a));
+  const podium = document.getElementById('podium');
+  podium.innerHTML = '';
 
-const tbody = document.getElementById('tbody');
-const rest  = sorted.slice(3);
-
-if (rest.length) {
-  document.getElementById('table-section').style.display = '';
-  rest.forEach((p, i) => {
-    tbody.innerHTML += `
-      <tr>
-        <td class="rank-num">${i + 4}</td>
-        <td>
-          <div class="row-name">${p.name}</div>
-          <div class="countries table-countries">${pillsHTML(p.countries)}</div>
-        </td>
-        <td class="row-pts">${totalPts(p)}<span class="pts-unit"> pts</span></td>
-      </tr>`;
+  sorted.slice(0, 3).forEach((p, i) => {
+    const t = totalPts(p);
+    podium.innerHTML += `
+      <div class="podium-card ${['first','second','third'][i]}">
+        <div class="medal">${['🥇','🥈','🥉'][i]}</div>
+        <div class="podium-name">${p.name}</div>
+        <div class="podium-pts">${t}</div>
+        <div class="pts-label">points</div>
+        <div class="countries">${pillsHTML(p.countries, globalMaxPts)}</div>
+      </div>`;
   });
+
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  const rest = sorted.slice(3);
+
+  if (rest.length) {
+    document.getElementById('table-section').style.display = '';
+    rest.forEach((p, i) => {
+      tbody.innerHTML += `
+        <tr>
+          <td class="rank-num">${i + 4}</td>
+          <td>
+            <div class="row-name">${p.name}</div>
+            <div class="countries table-countries">${pillsHTML(p.countries, globalMaxPts)}</div>
+          </td>
+          <td class="row-pts">${totalPts(p)}<span class="pts-unit"> pts</span></td>
+        </tr>`;
+    });
+  }
 }
+
+function showError(message) {
+  const podium = document.getElementById('podium');
+  podium.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding: 40px; color: var(--muted);">${message}</div>`;
+}
+
+fetch(API_URL)
+  .then(res => {
+    if (!res.ok) throw new Error(`Request failed with status ${res.status}`);
+    return res.json();
+  })
+  .then(data => render(data))
+  .catch(err => {
+    console.error('Failed to load leaderboard data:', err);
+    showError('Unable to load leaderboard data. Please try again later.');
+  });
 </script>
 <script>
 (function () {
