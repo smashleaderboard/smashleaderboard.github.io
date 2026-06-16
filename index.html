@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scuttery World Cup</title>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Scuttery World Cup</title>
+ <link href="https://fonts.googleapis.com/css2?family=Anton&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+ <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -64,43 +64,6 @@
       height: 3px;
       margin: 16px auto 0;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    }
-
-    /* ── Analysis button ── */
-    .analysis-btn-wrap {
-      text-align: center;
-      margin: -24px 0 36px;
-    }
-    .analysis-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      text-decoration: none;
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.75);
-      border: 1px solid rgba(255,255,255,.15);
-      background: rgba(255,255,255,.04);
-      padding: 10px 22px;
-      border-radius: 8px;
-      transition: color .2s, border-color .2s, background .2s, box-shadow .2s;
-    }
-    .analysis-btn:hover {
-      color: var(--gold);
-      border-color: rgba(255,215,0,.5);
-      background: rgba(255,215,0,.06);
-      box-shadow: 0 0 18px rgba(255,215,0,.12);
-    }
-    .analysis-btn svg {
-      opacity: .6;
-      transition: opacity .2s, transform .2s;
-    }
-    .analysis-btn:hover svg {
-      opacity: 1;
-      transform: translateX(3px);
     }
 
     /* ── Podium ── */
@@ -340,44 +303,30 @@
       .podium { grid-template-columns: 1fr; align-items: stretch; }
       .podium-card.first { padding-top: 28px; }
     }
-  </style>
+ </style>
 </head>
 <body>
 <canvas id="bg"></canvas>
 <div class="wrapper">
-  <header>
-    <div class="trophy">🏆</div>
-    <h1><span>Leaderboard</span></h1>
-  </header>
+ <header>
+ <div class="trophy">🏆</div>
+ <h1><span>Leaderboard</span></h1>
+ </header>
 
-  <div class="analysis-btn-wrap">
-    <a href="/analysis" class="analysis-btn">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="8" width="3" height="5" rx="1" fill="currentColor"/>
-        <rect x="5.5" y="5" width="3" height="8" rx="1" fill="currentColor"/>
-        <rect x="10" y="2" width="3" height="11" rx="1" fill="currentColor"/>
-      </svg>
-      Pre-tournament predictions
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 7h8M7.5 3.5L11 7l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-  </div>
+ <div class="podium" id="podium"></div>
 
-  <div class="podium" id="podium"></div>
-
-  <div class="table-section" id="table-section" style="display:none">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Participant &amp; Teams</th>
-          <th class="right">Points</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
+ <div class="table-section" id="table-section" style="display:none">
+ <table>
+ <thead>
+ <tr>
+ <th>#</th>
+ <th>Participant &amp; Teams</th>
+ <th class="right">Points</th>
+ </tr>
+ </thead>
+ <tbody id="tbody"></tbody>
+ </table>
+ </div>
 </div>
 <script>
 const API_URL = "https://smashscuttery.pythonanywhere.com/";
@@ -410,13 +359,13 @@ function render(PLAYERS) {
   sorted.slice(0, 3).forEach((p, i) => {
     const t = totalPts(p);
     podium.innerHTML += `
-      <div class="podium-card ${['first','second','third'][i]}">
-        <div class="medal">${['🥇','🥈','🥉'][i]}</div>
-        <div class="podium-name">${p.name}</div>
-        <div class="podium-pts">${t}</div>
-        <div class="pts-label">points</div>
-        <div class="countries">${pillsHTML(p.countries, globalMaxPts)}</div>
-      </div>`;
+ <div class="podium-card ${['first','second','third'][i]}">
+ <div class="medal">${['🥇','🥈','🥉'][i]}</div>
+ <div class="podium-name">${p.name}</div>
+ <div class="podium-pts">${t}</div>
+ <div class="pts-label">points</div>
+ <div class="countries">${pillsHTML(p.countries, globalMaxPts)}</div>
+ </div>`;
   });
 
   const tbody = document.getElementById('tbody');
@@ -427,14 +376,14 @@ function render(PLAYERS) {
     document.getElementById('table-section').style.display = '';
     rest.forEach((p, i) => {
       tbody.innerHTML += `
-        <tr>
-          <td class="rank-num">${i + 4}</td>
-          <td>
-            <div class="row-name">${p.name}</div>
-            <div class="countries table-countries">${pillsHTML(p.countries, globalMaxPts)}</div>
-          </td>
-          <td class="row-pts">${totalPts(p)}<span class="pts-unit"> pts</span></td>
-        </tr>`;
+ <tr>
+ <td class="rank-num">${i + 4}</td>
+ <td>
+ <div class="row-name">${p.name}</div>
+ <div class="countries table-countries">${pillsHTML(p.countries, globalMaxPts)}</div>
+ </td>
+ <td class="row-pts">${totalPts(p)}<span class="pts-unit"> pts</span></td>
+ </tr>`;
     });
   }
 }
